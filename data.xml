@@ -1,0 +1,31 @@
+<E3K>
+    
+	<ProductFeature>
+		
+		<paymentTerm>
+		     <value>10</value>
+			 <value>20</value>
+			 </paymentTerm>
+	</ProductFeature>
+	
+	
+	<Coverage>
+		
+	 <BasicCoverage plan="aaa">
+	     <age>10</age>s
+	</BasicCoverage>
+
+	<Riders>
+	 
+	 <ADD>
+	     <long>additional protection</long>
+		 
+	 </ADD>
+	 
+	 <TI> 
+		 <tage>bbbbsfasf</tage>
+     </TI>
+	 
+	 </Riders>
+	</Coverage>
+</E3K>
