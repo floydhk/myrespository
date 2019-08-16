@@ -3,3 +3,11 @@ https://stackoverflow.com/questions/6935639/how-to-use-java-jms-with-mqseries
 https://www.programcreek.com/java-api-examples/?class=com.ibm.mq.jms.MQQueueConnectionFactory&method=setQueueManager
 
 https://hursleyonwmq.wordpress.com/2007/05/29/simplest-sample-applications-using-websphere-mq-jms/
+
+https://github.com/ibm-messaging/mq-jms-spring
+
+https://developer.ibm.com/messaging/learn-mq/mq-tutorials/develop-mq-jms/
+
+https://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/tmj_devcl.html
+
+https://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/tmj_pgmng.html
