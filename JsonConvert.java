@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-
+import java.util.Vector;
 
 import javax.jms.JMSException;
 import javax.jms.Queue;
@@ -30,39 +30,49 @@ public class JsonConvert {
 
 	
 	
-	public void go () {
+	public String go () {
 		
 		  StringWriter data=new StringWriter(); 
 		  
 	       ObjectMapper mapper = new ObjectMapper();
-
-	        Staff staff = createStaff();
+	       HashMap h=new HashMap();
+	        Vector v = createStaff();
 
 	        try {
 
+	        	  for (int index = 0; index < v.size(); index++) {            
+	                  Object o=v.get(index);       
+	                  System.out.println("oo=" + o.getClass().getSimpleName());
+	                  
+	        	 
+	        	
 	            // Java objects to JSON file
 	          //  mapper.writeValue(data, staff);
+	        		            // Java objects to JSON string - compact-print
+   	               //String jsonString = mapper.writeValueAsString(o);
+ 	                 h.put(o.getClass().getSimpleName(), o);
+ 	            }
 
-	            // Java objects to JSON string - compact-print
-	            String jsonString = mapper.writeValueAsString(staff);
-
-	            System.out.println(jsonString);
+	        	  
+	        //	  System.out.println(jsonString);
 
 	            // Java objects to JSON string - pretty-print
-	            String jsonInString2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(staff);
+	            String jsonInString2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(h);
 
 	            System.out.println(jsonInString2);
-
+	            return jsonInString2;     
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
-
+	       return null;
 	    }
 
 	
 
-private static Staff createStaff() {
+private static Vector createStaff() {
 
+	Vector v=new Vector();
+	
     Staff staff = new Staff();
 
     staff.setName("mkyong");
@@ -82,7 +92,14 @@ private static Staff createStaff() {
     staff.setSalary(salary);
     staff.setSkills(Arrays.asList("java", "python", "node", "kotlin"));
 
-    return staff;
+    Place p=new Place();
+    p.setAaa("hello world");
+    p.setB(34343);
+    
+    
+    v.add(staff);
+    v.add(p);
+    return v;
 
 }
 
