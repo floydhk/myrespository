@@ -1,0 +1,201 @@
+
+http://mqpubsub.blogspot.com/
+
+Publish/Subscribe in WebSphere MQ v7 with example
+search
+Classic Flipcard Magazine Mosaic Sidebar Snapshot Timeslide
+DEC
+2
+
+WebSphere MQ Publish/Subscribe and JMS
+
+Message-oriented middleware decouples applications communicating by using two messaging models: point-to-point messaging and publish/subscribe messaging. 
+Lets see here how publish/subscribe messaging is used for communication between two JMS applications making use of the administrative features of publish/subscribe provided in WebSphere MQ v7.
+
+What is publish/subscribe?
+Publish/subscribe messaging allows you to decouple the provider of information, from the consumers of that information. The sending application and receiving application do not need to know anything about each other for the information to be sent and received.
+Components of publish/subscribe
+Publisher -  This component generates messages (publications) under a certain subject (topic) and sends the publications to a WMQ queue manager. A publisher knows nothing about the recipient(s) of the information.
+Subscriber - This component registers interest in a certain topic(s) with a WMQ queue manager. It also specifies its subscription queue name; that is, the queue where it wants to receive the messages related to this topic. The subscriber knows nothing about the information publishers(s).
+Publications Router -  This component passes messages from publishers to topic subscribers. Generally this is a Queue Manager.
+What is Topic and how is it different from Queue?
+A topic is a character string that describes the subject of the information that is published in a publish/subscribe message. A queue is always associated with a specific address and can be used only in one-to-one communication. A topic has no logical address associated with and can be subscribed or published by many and hence can be said used in one-to-many or many-to-one communication. In WebSphere MQ you can create a Topic in same way as a queue and has a default system object called SYSTEM.DEFAULT.TOPIC.
+
+From WebSphere MQ v7 Queue Manager is used as the publications router and we can define administrative objects like Topics and Subscriptions through WebSphere MQ Explorer.Prior to this a Broker component was used for this.
+ Also WebSphere MQ Explorer is used to create JMS Administered objects required by the applications to communicate with each other.WebSphere MQ Explorer is used to create and configure connection factories and destinations as administered objects in a JNDI namespace. An application can then retrieve the administered objects from the JNDI namespace.
+Connection factories and destinations are starting points in the flow of logic of a JMS application. An application uses a ConnectionFactory object to create a connection to a messaging server, and uses a Queue or Topic object as a target (destination) to send messages to or a source (destination) from which to receive messages. 
+IBM WebSphere MQ classes for Java Message Service (also referred to as WebSphere MQ JMS) is a set of Java classes that enables the JMS applications to access WebSphere MQ systems.  The JMS application is written to use only references to the interfaces in javax.jms package. All vendor-specific information (IBM WebSphere MQ) is encapsulated in implementations of the following JMS administered objects:
+ConnectionFactory
+QueueConnectionFactory
+TopicConnectionFactory
+Queue
+Topic
+The Java classes of the IBM WebSphere MQ JMS provider communicate with the queue manager through Connection factories using one of the following transport options: 
+1. As an IBM WebSphere MQ client using TCP/IP
+2. In bindings mode, connecting directly to IBM WebSphere MQ
+
+A publish/subscribe scenario 
+A news broadcasting company A sends various channels of news to its clients C and D through email and sms. For e.g take sports news. In point-to-point messaging this is achieved by company A put messages in email and sms queues defined for companies C and D. The destination needs to be known by company A to do this. But in publish/subscribe messaging company A publishes the sports news messages to a component called Topic. The interested clients C and D can subscribe to this topic and provide their subscription queue names where they like to receive the messages.This allows full decoupling of applications involved in messaging. Company A does not know about their Sports News channel subscribers C and D and vice versa. Now if the company A like to create a new news channel for entertainment all it has to do is define a new topic in the intermediate queue manager used for messaging.
+How to setup publish/subscribe using WebSphere MQ JMS and WebSphere MQ Explorer v7 
+Create a queue manager.
+Create a news topic.
+Create subscription queues.
+Create subscriptions.
+Create Java Messaging Services (JMS)-administered objects.
+Create a Connection Factory
+Create Destinations
+Write publisher and subscriber classes. [Applications]
+Run the classes.
+1. Create a Queue manager
+
+In MQ Explorer's Navigator view, right-click Queue Managers and then select New > Queue Manager. This starts the "Create Queue Manager" wizard.On Step 1, enter TestQM1 as the queue manager name and then click Next until you reach the screen to enter port number. Make sure the port number you enter is not used by other Queue Manager. Finally click Finish.
+
+
+
+
+
+
+2. Create a news topic.
+
+Under TestQM1, right-click Topics and then select New > Topic to start the "New Topic" wizard. Type News.Topic as the topic name and click Next. On the topic properties page, type News in the "Topic string" field and click Finish.
+
+
+
+3. Create subscription queues.
+
+Under TestQM1, right-click Queues then select New > Local Queue to start the "New Local Queue" wizard. In the name field, type Email.Queue and click Finish. Repeat the same for SMS.Queue.
+
+
+
+4. Create subscriptions.
+Under TestQM1, right-click Subscriptions and then select New > Subscription to start the "New Subscription" wizard. In the name field, type EmailSubscription and click Next. In the "Change properties" page, press the Select button next to the "Topic name" and then select News.Topic from the displayed topics list. Press OK. On the same page, type Email.Queue in the destination name field and click Finish.
+
+
+
+
+
+
+
+
+Repeat the above steps to create another subscription called SMSSubscription with the topic set to News.Topic and the destination name set to SMS.Queue.
+
+Quick Test for the Publish/Subscribe setup Created.
+
+Under TestQM1, click Topics. In the right pane, right click News.Topic and select "Test Publication" to open the test window. In the message data field, type "pub/sub msg1" (or any other text), click the "Publish message" button, and then click the Close button. This should distribute the message to the subscriber queues Email.Queue and SMS.Queue. You can right click on Email.Queue and click Browse Messages...You will find the same message in the Message Data column. Right Click the Queues and Clear Messages... after testing.
+
+
+
+
+
+
+
+
+
+5. Create Java Messaging Services (JMS)-administered objects. 
+
+To store JMS-administered objects, create a file-based Java Naming and Directory Interface (JNDI) namespace. Start by adding a new initial context. Right-click JMS-Administered Objects and then select Add Initial Context.Select "File System" for "Where is the JNDI located."For the Bindings directory, browse to C:\JNDI-Directory (This directory has to exist). Click Finish. 
+
+Note::Make a note of Factory class "com.sun.jndi.fscontext.RefFSContextFactory" and Provider URL "file:/C:/JNDI-Directory/". This will be used in the Java code later.
+
+
+
+
+
+
+6. Create a Connection Factory
+
+Right-click Connection Factories and then select New –> Connection Factory. On the first screen, type TestQM1ConnectionFactory in the name field and click Next. Click Next till last page. On the last page, select the connection tab (on the left) and then click the Select button to select TestQM1 as "Base queue manager". Click Finish.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7. Create Destinations
+
+Right-click destinations and select New –> Destination to start the "New Destination" wizard.
+In the first step, enter NewsTopic in the Name field and change the Type field to Topic. Click Next till last page. On the last page (Change properties), type News in the Topic field and then click Finish.
+
+Right-click destinations and then select New –> Destination to start the "new Destination" wizard. In the first step, type EmailQueue in the Name field and then click Next. Click Next on the second screen. On the last page, click the Select button next to the "Queue Manager" field and select TestQM1 from the list. Click the Select button next to the Queue field and select Email Queue from list and click Finish.
+Repeat the above steps to create another Destination called SMSQueue for SMS.Queue.
+
+
+
+
+
+
+
+
+
+
+
+
+
+8. Write publisher and subscriber classes.
+
+Now all the configurations involving JMS Administered objects and MQ Explorer are complete we can write the JMS Applications.
+
+The Applications will be simple.
+Publisher Application write a message to a Topic.
+Subscriber Application read messages from Subscription Queues.
+
+Lets see what are the java classes [Applications] about. The Applications use JMS Interfaces [API] which treat queues and topics uniformly as destinations. You have a utility class and a Publisher class and two Subscriber classes.
+
+
+JNDIUtil Class
+This class includes generic methods which retrieve JMS objects through JNDI lookup. Get the InitialContext and assign it to a Context object.Generic methods in this class are used to retrieve references to the JMS objects already defined.getObjectByName()getConnectionFactory()getDestination()
+NewsPublisher Class
+This class publishes messages to News Topic
+Get a ConnectionFactory through lookup and use the factory object to create a Connection
+
+factory= jndiUtil.getConnectionFactory("TestQMConnectionFactory"); 
+connection = factory.createConnection();
+
+Use the connection object to create a session
+
+session = connection.createSession( transacted, Session.AUTO_ACKNOWLEDGE);
+
+To publish messages retrieve a News destination object and create a MessageProducer and then send messages:
+
+destination = jndiUtil.getDestination("NewsTopic");
+producer = session.createProducer(destination);
+TextMessage message = session.createTextMessage("No News is Good News!");
+producer.send(message);
+EmailSubscriber and SMSSubscriber
+These applications read messages from the Subscription queues. It uses a MessageConsumer to retrieve messages from queues:
+consumer = session.createConsumer(destination);TextMessage iMsg = (TextMessage) consumer.receive(1000);
+9. Run the classes
+
+Now since the setup is complete you can run the Java Classes.
+
+The JAR files required to compile and run the sample classes are automatically added to the CLASSPATH environment variable when you install WMQ. The required JARs are located in C:\Program Files\IBM\WebSphere MQ\Java\lib, including the JARs you need for JMS and JNDI. You just need to add the sample classes from the code to your CLASSPATH environment variable.
+
+To publish messages, run the NewsPublisher:
+
+java <packagename>.NewsPublisher
+
+Run both subscribers after your run the NewsPublisher to retrieve messages. Each class should retrieve its own copy of the messages published by NewsPublisher:
+
+java <packagename>.EmailSubscriber
+java <packagename>.SMSSubscriber
+
+Credits: The complete credit goes to the original content and author in the below link. Source code is available for download.
+
+http://www.devx.com/Java/Article/41921
+
+Posted 2nd December 2012 by Unknown
+  
+3  View comments
+
+Loading
+Dynamic Views theme. Powered by Blogger.
