@@ -1,0 +1,4 @@
+        int iStart=jsonObject.indexOf("cars");
+        int iEnd=jsonObject.indexOf("},", iStart);
+        String start=jsonObject.substring(0, iStart-1);
+        String end=jsonObject.substring(iEnd+2, jsonObject.length());
